@@ -1,5 +1,16 @@
 package com.giga;
 
+/*
+  ********************************************************************
+  File:      Student.java  (Class)
+  Author:    Chamupathi Gigara Hettige
+  Contents:  6SENG002W CWK
+  This defines the student class.
+  Date:      22/11/20
+  Version:   1.0
+  ***********************************************************************
+ */
+
 import static com.giga.Utils.print;
 import static com.giga.Utils.randomTime;
 

@@ -1,5 +1,16 @@
 package com.giga;
 
+/*
+  ********************************************************************
+  File:      Utils.java  (Class)
+  Author:    Chamupathi Gigara Hettige
+  Contents:  6SENG002W CWK
+  This provides all the utility functions.
+  Date:      22/11/20
+  Version:   1.0
+  ***********************************************************************
+ */
+
 public class Utils {
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_RED = "\u001B[31m";

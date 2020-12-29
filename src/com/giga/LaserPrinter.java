@@ -1,5 +1,16 @@
 package com.giga;
 
+/*
+  ********************************************************************
+  File:      LaserPrinter.java  (Class)
+  Author:    Chamupathi Gigara Hettige
+  Contents:  6SENG002W CWK
+  This provides all the laser printer functions.
+  Date:      22/11/20
+  Version:   1.0
+  ***********************************************************************
+ */
+
 import java.util.concurrent.Semaphore;
 
 import static com.giga.Utils.*;
