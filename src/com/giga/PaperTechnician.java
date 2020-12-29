@@ -31,14 +31,14 @@ public class PaperTechnician extends Thread {
     @Override
     public void run() {
         try {
-            printer.refillPaper();
             sleep(randomTime());
+            printer.refillPaper();
 
-            printer.refillPaper();
             sleep(randomTime());
+            printer.refillPaper();
 
-            printer.refillPaper();
             sleep(randomTime());
+            printer.refillPaper();
 
         } catch (InterruptedException e) {
             e.printStackTrace();

@@ -80,23 +80,21 @@ public class LaserPrinter implements ServicePrinter {
         // pre condition before refilling papers
         // check for maximum number of papers
         // obligatory-guarded action
-        boolean isExceeding = tonerLevel > ServicePrinter.Minimum_Toner_Level;
-        while (isExceeding) {
-            try {
-                if (!isUsing()) {
-                    break;
-                }
-                print("Waiting to replace toner");
+        try {
+            while (tonerLevel > ServicePrinter.Minimum_Toner_Level) {
+                System.out.println("Waiting to replace toner");
+                System.out.println("Printer already have enough toner level. Trying again in 5 seconds.");
                 wait(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        if (!isExceeding) {
-            print("Replace toner");
-            tonerLevel = ServicePrinter.Full_Toner_Level;
-            print("");
-        }
+
+        print(toString());
+        System.out.println("Replace toner");
+        tonerLevel = ServicePrinter.Full_Toner_Level;
+        print(toString());
+        print("");
 
         // notify others
         notifyAll();
@@ -110,23 +108,21 @@ public class LaserPrinter implements ServicePrinter {
         // pre condition before refilling papers
         // check for maximum number of papers
         // obligatory-guarded action
-        boolean isExceeding = paperLevel + ServicePrinter.SheetsPerPack > ServicePrinter.Full_Paper_Tray;
-        while (isExceeding) {
-            try {
-                if (!isUsing()) {
-                    break;
-                }
-                print("Waiting to refill paper");
+        try {
+            while ((paperLevel + ServicePrinter.SheetsPerPack) > ServicePrinter.Full_Paper_Tray) {
+                System.out.println("Waiting to refill paper");
+                System.out.println("Printer already have enough papers. Trying again in 5 seconds.");
                 wait(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
-        }
-        if (!isExceeding) {
-            print("Refill paper");
+
+            print(toString());
+            System.out.println("Refill paper");
             paperLevel += ServicePrinter.SheetsPerPack;
             print(toString());
             print("");
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
         // notify others
         notifyAll();
@@ -144,29 +140,29 @@ public class LaserPrinter implements ServicePrinter {
         // pre condition before printing
         // check for enough pages & toner
         // obligatory-guarded action
-        while (paperLevel < pages || tonerLevel < pages) {
-            try {
-                print("Waiting - No enough papers / toner");
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
 
-        print("Printing " + document.getDocumentName() + " of " + document.getUserID());
-        // print if pre condition passed
-        paperLevel -= pages;
-        tonerLevel -= pages;
+        try {
+            print(toString());
+            System.out.println("Printing " + document.getDocumentName() + " of " + document.getUserID());
+            // print if pre condition passed
+            for (int i = 0; i < pages; i++) {
+                if (paperLevel > 0 && tonerLevel > 0) {
+                    paperLevel--;
+                    tonerLevel--;
+                } else {
+                    System.out.println("No paper or toner");
+                    wait();
+                }
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         documentsPrinted++;
         print(toString());
         print("");
 
         // notify others
         notifyAll();
-    }
-
-    private boolean isUsing() {
-        return studentsGroup.activeCount() == 0;
     }
 
 }
