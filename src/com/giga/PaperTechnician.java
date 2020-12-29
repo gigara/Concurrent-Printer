@@ -1,6 +1,5 @@
 package com.giga;
 
-import static com.giga.Utils.print;
 import static com.giga.Utils.randomTime;
 
 public class PaperTechnician extends Thread {
@@ -32,15 +31,12 @@ public class PaperTechnician extends Thread {
     @Override
     public void run() {
         try {
-            print("Replacing paper by " + getPaperTechnicianName());
             printer.refillPaper();
             sleep(randomTime());
 
-            print("Replacing paper by " + getPaperTechnicianName());
             printer.refillPaper();
             sleep(randomTime());
 
-            print("Replacing paper by " + getPaperTechnicianName());
             printer.refillPaper();
             sleep(randomTime());
 

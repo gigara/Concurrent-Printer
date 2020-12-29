@@ -32,10 +32,10 @@ public class Student extends Thread {
     @Override
     public void run() {
         Document CWK1 = new Document(studentName, "cwk1", 10);
-        Document CWK2 = new Document(studentName, "cwk2", 13);
-        Document CWK3 = new Document(studentName, "cwk3", 40);
+        Document CWK2 = new Document(studentName, "cwk2", 16);
+        Document CWK3 = new Document(studentName, "cwk3", 5);
         Document CWK4 = new Document(studentName, "cwk4", 20);
-        Document CWK5 = new Document(studentName, "cwk5", 15);
+        Document CWK5 = new Document(studentName, "cwk5", 22);
 
         // print documents
         try {

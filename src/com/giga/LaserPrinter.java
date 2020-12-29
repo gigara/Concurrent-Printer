@@ -1,8 +1,6 @@
 package com.giga;
 
-import java.util.concurrent.Semaphore;
-
-import static com.giga.Utils.*;
+import static com.giga.Utils.print;
 
 public class LaserPrinter implements ServicePrinter {
     private String printerID;
@@ -11,7 +9,6 @@ public class LaserPrinter implements ServicePrinter {
     private int documentsPrinted;
     private ThreadGroup studentsGroup;
     private ThreadGroup techniciansGroup;
-    private Semaphore printer = new Semaphore(1);
 
     public LaserPrinter(String printerID, ThreadGroup studentsGroup, ThreadGroup techniciansGroup) {
         this.printerID = printerID;
@@ -83,30 +80,24 @@ public class LaserPrinter implements ServicePrinter {
         // pre condition before refilling papers
         // check for maximum number of papers
         // obligatory-guarded action
-        try {
-            while (tonerLevel > ServicePrinter.Minimum_Toner_Level) {
-                printWarn("Waiting to replace toner");
+        boolean isExceeding = tonerLevel > ServicePrinter.Minimum_Toner_Level;
+        while (isExceeding) {
+            try {
                 if (!isUsing()) {
-                    printError("Skip the toner replace job since no more printing jobs are in the queue.");
                     break;
                 }
-                printError("Printer already have enough toner level. Trying again in 5 seconds.");
+                print("Waiting to replace toner");
                 wait(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            printer.acquire();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
-
-        if (isUsing()) {
-            print(toString());
-            printSuccess("Replace toner");
+        if (!isExceeding) {
+            print("Replace toner");
             tonerLevel = ServicePrinter.Full_Toner_Level;
-            print(toString());
             print("");
         }
 
-        printer.release();
         // notify others
         notifyAll();
     }
@@ -119,30 +110,24 @@ public class LaserPrinter implements ServicePrinter {
         // pre condition before refilling papers
         // check for maximum number of papers
         // obligatory-guarded action
-        try {
-            while ((paperLevel + ServicePrinter.SheetsPerPack) > ServicePrinter.Full_Paper_Tray) {
-                printWarn("Waiting to refill paper");
+        boolean isExceeding = paperLevel + ServicePrinter.SheetsPerPack > ServicePrinter.Full_Paper_Tray;
+        while (isExceeding) {
+            try {
                 if (!isUsing()) {
-                    printError("Skip the paper replace job since no more printing jobs are in the queue.");
                     break;
                 }
-                printError("Printer already have enough papers. Trying again in 5 seconds.");
+                print("Waiting to refill paper");
                 wait(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-
-            printer.acquire();
-            if (isUsing()) {
-                print(toString());
-                printSuccess("Refill paper");
-                paperLevel += ServicePrinter.SheetsPerPack;
-                print(toString());
-                print("");
-            }
-            printer.release();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
-
+        if (!isExceeding) {
+            print("Refill paper");
+            paperLevel += ServicePrinter.SheetsPerPack;
+            print(toString());
+            print("");
+        }
         // notify others
         notifyAll();
     }
@@ -159,32 +144,20 @@ public class LaserPrinter implements ServicePrinter {
         // pre condition before printing
         // check for enough pages & toner
         // obligatory-guarded action
-
-        try {
-            print(toString());
-            printInfo("Printing " + document.getDocumentName() + " of " + document.getUserID());
-            // print if pre condition passed
-            for (int i = 0; i < pages; i++) {
-                if (paperLevel > 0 && tonerLevel > 0) {
-                    printer.acquire();
-                    paperLevel--;
-                    tonerLevel--;
-                    printer.release();
-                } else {
-                    if (paperLevel == 0) {
-                        printError("No enough papers!\n");
-                    }
-                    if (tonerLevel == 0) {
-                        printError("No enough toner!\n");
-                    }
-                    wait();
-                }
+        while (paperLevel < pages || tonerLevel < pages) {
+            try {
+                print("Waiting - No enough papers / toner");
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
+
+        print("Printing " + document.getDocumentName() + " of " + document.getUserID());
+        // print if pre condition passed
+        paperLevel -= pages;
+        tonerLevel -= pages;
         documentsPrinted++;
-        printInfo("Print job completed: " + document.getDocumentName() + " of " + document.getUserID());
         print(toString());
         print("");
 
@@ -193,7 +166,7 @@ public class LaserPrinter implements ServicePrinter {
     }
 
     private boolean isUsing() {
-        return studentsGroup.activeCount() > 0;
+        return studentsGroup.activeCount() == 0;
     }
 
 }

@@ -1,7 +1,5 @@
 package com.giga;
 
-import static com.giga.Utils.printInfo;
-
 public class PrintingSystem {
     public static void main(String[] args) {
         // initialize
@@ -36,7 +34,7 @@ public class PrintingSystem {
             tonerTechnician.join();
 
             // final status after terminating all the threads.
-            printInfo(laserPrinter.toString());
+            System.out.println(laserPrinter.toString());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
