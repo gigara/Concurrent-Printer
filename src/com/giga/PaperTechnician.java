@@ -32,17 +32,17 @@ public class PaperTechnician extends Thread {
     @Override
     public void run() {
         try {
+            sleep(randomTime());
             print("Replacing paper by " + getPaperTechnicianName());
             printer.refillPaper();
-            sleep(randomTime());
 
+            sleep(randomTime());
             print("Replacing paper by " + getPaperTechnicianName());
             printer.refillPaper();
-            sleep(randomTime());
 
+            sleep(randomTime());
             print("Replacing paper by " + getPaperTechnicianName());
             printer.refillPaper();
-            sleep(randomTime());
 
         } catch (InterruptedException e) {
             e.printStackTrace();

@@ -32,17 +32,17 @@ public class TonerTechnician extends Thread {
     @Override
     public void run() {
         try {
+            sleep(randomTime());
             print("Replacing toner by " + getTonerTechnicianName());
             printer.replaceTonerCartridge();
-            sleep(randomTime());
 
+            sleep(randomTime());
             print("Replacing toner by " + getTonerTechnicianName());
             printer.replaceTonerCartridge();
-            sleep(randomTime());
 
+            sleep(randomTime());
             print("Replacing toner by " + getTonerTechnicianName());
             printer.replaceTonerCartridge();
-            sleep(randomTime());
 
         } catch (InterruptedException e) {
             e.printStackTrace();
