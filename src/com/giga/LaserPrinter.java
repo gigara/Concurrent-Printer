@@ -77,11 +77,11 @@ public class LaserPrinter implements ServicePrinter {
      */
     @Override
     public synchronized void replaceTonerCartridge() {
-        // pre condition before refilling papers
-        // check for maximum number of papers
-        // obligatory-guarded action
         try {
             while (tonerLevel > ServicePrinter.Minimum_Toner_Level) {
+                if (studentsGroup.activeCount() == 0) {
+                    break;
+                }
                 System.out.println("Waiting to replace toner");
                 System.out.println("Printer already have enough toner level. Trying again in 5 seconds.");
                 wait(5000);
@@ -90,11 +90,15 @@ public class LaserPrinter implements ServicePrinter {
             e.printStackTrace();
         }
 
-        print(toString());
-        System.out.println("Replace toner");
-        tonerLevel = ServicePrinter.Full_Toner_Level;
-        print(toString());
-        print("");
+        if (studentsGroup.activeCount() != 0) {
+            print(toString());
+            System.out.println("Replace toner");
+            tonerLevel = ServicePrinter.Full_Toner_Level;
+            print(toString());
+            print("");
+        } else {
+            System.out.println("Exiting toner replace since there are no more printing jobs.");
+        }
 
         // notify others
         notifyAll();
@@ -105,21 +109,25 @@ public class LaserPrinter implements ServicePrinter {
      */
     @Override
     public synchronized void refillPaper() {
-        // pre condition before refilling papers
-        // check for maximum number of papers
-        // obligatory-guarded action
         try {
             while ((paperLevel + ServicePrinter.SheetsPerPack) > ServicePrinter.Full_Paper_Tray) {
+                if (studentsGroup.activeCount() == 0) {
+                    break;
+                }
                 System.out.println("Waiting to refill paper");
                 System.out.println("Printer already have enough papers. Trying again in 5 seconds.");
                 wait(5000);
             }
 
-            print(toString());
-            System.out.println("Refill paper");
-            paperLevel += ServicePrinter.SheetsPerPack;
-            print(toString());
-            print("");
+            if (studentsGroup.activeCount() != 0) {
+                print(toString());
+                System.out.println("Refill paper");
+                paperLevel += ServicePrinter.SheetsPerPack;
+                print(toString());
+                print("");
+            } else {
+                System.out.println("Exiting toner replace since there are no more printing jobs.");
+            }
 
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -136,10 +144,6 @@ public class LaserPrinter implements ServicePrinter {
     @Override
     public synchronized void printDocument(Document document) {
         int pages = document.getNumberOfPages();
-
-        // pre condition before printing
-        // check for enough pages & toner
-        // obligatory-guarded action
 
         try {
             print(toString());
