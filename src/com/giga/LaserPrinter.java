@@ -97,7 +97,7 @@ public class LaserPrinter implements ServicePrinter {
         try {
             while (tonerLevel > ServicePrinter.Minimum_Toner_Level) {
                 printWarn("Waiting to replace toner");
-                if (!isUsing()) {
+                if (!isQueueNotEmpty()) {
                     printError("Skip the toner replace job since no more printing jobs are in the queue.");
                     break;
                 }
@@ -109,7 +109,7 @@ public class LaserPrinter implements ServicePrinter {
             e.printStackTrace();
         }
 
-        if (isUsing()) {
+        if (isQueueNotEmpty()) {
             print(toString());
             printSuccess("Replace toner");
             tonerLevel = ServicePrinter.Full_Toner_Level;
@@ -133,7 +133,7 @@ public class LaserPrinter implements ServicePrinter {
         try {
             while ((paperLevel + ServicePrinter.SheetsPerPack) > ServicePrinter.Full_Paper_Tray) {
                 printWarn("Waiting to refill paper");
-                if (!isUsing()) {
+                if (!isQueueNotEmpty()) {
                     printError("Skip the paper replace job since no more printing jobs are in the queue.");
                     break;
                 }
@@ -142,10 +142,11 @@ public class LaserPrinter implements ServicePrinter {
             }
 
             printer.acquire();
-            if (isUsing()) {
+            if (isQueueNotEmpty()) {
                 print(toString());
                 printSuccess("Refill paper");
-                paperLevel += ServicePrinter.SheetsPerPack;
+                int packCount = (ServicePrinter.Full_Paper_Tray - paperLevel) / ServicePrinter.SheetsPerPack;
+                paperLevel += (ServicePrinter.SheetsPerPack * packCount);
                 print(toString());
                 print("");
             }
@@ -173,14 +174,14 @@ public class LaserPrinter implements ServicePrinter {
 
         try {
             print(toString());
-            printInfo("Printing " + document.getDocumentName() + " of " + document.getUserID());
+            printInfo("Printing " + document.getDocumentName() + " of " + document.getUserID() + " - "
+                    + pages + " Pages");
             // print if pre condition passed
+            printer.acquire();
             for (int i = 0; i < pages; i++) {
                 if (paperLevel > 0 && tonerLevel > 0) {
-                    printer.acquire();
                     paperLevel--;
                     tonerLevel--;
-                    printer.release();
                 } else {
                     if (paperLevel == 0) {
                         printError("No enough papers!\n");
@@ -188,9 +189,12 @@ public class LaserPrinter implements ServicePrinter {
                     if (tonerLevel == 0) {
                         printError("No enough toner!\n");
                     }
+                    printer.release();
                     wait();
+                    printer.acquire();
                 }
             }
+            printer.release();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -203,7 +207,7 @@ public class LaserPrinter implements ServicePrinter {
         notifyAll();
     }
 
-    private boolean isUsing() {
+    private boolean isQueueNotEmpty() {
         return studentsGroup.activeCount() > 0;
     }
 
