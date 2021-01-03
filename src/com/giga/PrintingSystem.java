@@ -30,19 +30,23 @@ public class PrintingSystem {
         TonerTechnician tonerTechnician = new TonerTechnician(techniciansGroup, "Sajith", laserPrinter);
 
         // Start threads.
-        student1.start();
-        student2.start();
-        student3.start();
-        student4.start();
-        paperTechnician.start();
-        tonerTechnician.start();
-
         // wait for all the threads to terminate.
         try {
+            paperTechnician.start();
+            tonerTechnician.start();
+
+            student1.start();
             student1.join();
+
+            student2.start();
             student2.join();
+
+            student3.start();
             student3.join();
+
+            student4.start();
             student4.join();
+
             paperTechnician.join();
             tonerTechnician.join();
 

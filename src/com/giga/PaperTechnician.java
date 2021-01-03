@@ -44,15 +44,15 @@ public class PaperTechnician extends Thread {
     public void run() {
         try {
             sleep(randomTime());
-            print("Replacing paper by " + getPaperTechnicianName());
+            print("Refill paper by " + getPaperTechnicianName());
             printer.refillPaper();
 
             sleep(randomTime());
-            print("Replacing paper by " + getPaperTechnicianName());
+            print("Refill paper by " + getPaperTechnicianName());
             printer.refillPaper();
 
             sleep(randomTime());
-            print("Replacing paper by " + getPaperTechnicianName());
+            print("Refill paper by " + getPaperTechnicianName());
             printer.refillPaper();
 
         } catch (InterruptedException e) {

@@ -189,6 +189,7 @@ public class LaserPrinter implements ServicePrinter {
                     if (tonerLevel == 0) {
                         printError("No enough toner!\n");
                     }
+                    i--;
                     printer.release();
                     wait();
                     printer.acquire();
